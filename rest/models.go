@@ -4,33 +4,32 @@ package rest
 
 // LightPointObject represents a single light point object
 type LightPointObject struct {
-	Id string
-	Address string
-	Location string
-	Destination byte
-	Intensity string
+	Id           string
+	Address      string
+	Location     string
+	Destination  string
+	Intensity    string
 	GroupAddress int
-	OnOff bool
-	Type string
+	OnOff        bool
+	Type         string
 }
 
 // GlobalScene represents a global scene
 type GlobalScene struct {
-	Id string
-	Name string
+	Id     string
+	Name   string
 	Scenes []InternScene
 }
 
 // InternScene represents a intern scene
 type InternScene struct {
-	Id string
-	Name string
-	LightPoints []LightPointObject
-	Saturation string
+	Id          string
+	Name        string
+	LightPoints []LightPointSaturation
 }
 
-// Control represents a control object
-type Control struct {
-	Id string
-	Scenes []GlobalScene
+// LightPointSaturation represents a LightPointObject with Saturation
+type LightPointSaturation struct {
+	LightPoints LightPointObject
+	Saturation  string
 }
