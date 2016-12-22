@@ -23,13 +23,14 @@ type GlobalScene struct {
 
 // InternScene represents a intern scene
 type InternScene struct {
-	Id          string
-	Name        string
-	LightPoints []LightPointSaturation
+	Id           string
+	Name         string
+	LightPoints  []*LightPointSaturation
+	sceneId      byte
 }
 
 // LightPointSaturation represents a LightPointObject with Saturation
 type LightPointSaturation struct {
-	LightPoints LightPointObject
+	LightPoint *LightPointObject
 	Saturation  string
 }
