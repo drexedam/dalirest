@@ -7,6 +7,10 @@ import (
 	"log"
 )
 
+const (
+	staticDirectory = "/static/"
+)
+
 func main() {
 
 	router := mux.NewRouter()
@@ -17,6 +21,10 @@ func main() {
 	router.HandleFunc("/lp", rest.GetLightPoints).Methods("GET")
 	log.Println("Registering endpoints /lz for get and post")
 	router.HandleFunc("/lz", rest.SceneHandler).Methods("GET", "POST")
+
+	router.
+	PathPrefix(staticDirectory).
+		Handler(http.StripPrefix(staticDirectory, http.FileServer(http.Dir("."+staticDirectory))))
 
 	log.Println(http.ListenAndServe(":8080", router))
 }
