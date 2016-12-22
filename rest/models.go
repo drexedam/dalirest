@@ -7,7 +7,7 @@ type LightPointObject struct {
 	Id           string
 	Address      string
 	Location     string
-	Destination  string
+	Destination  byte
 	Intensity    string
 	GroupAddress int
 	OnOff        bool

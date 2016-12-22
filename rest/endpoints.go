@@ -4,14 +4,41 @@ import (
 	"net/http"
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"log"
+	"strings"
 )
+
+var (
+	lpos []*LightPointObject
+)
+
+func init() {
+	lpos = make([]*LightPointObject, 3)
+	lpos[0] = &LightPointObject{
+		Id: "1",
+		Destination: 0x0,
+		Address: "Keks1",
+		Location: "U325-Team3",
+		Type: "Lamp",
+	}
+	lpos[1] = &LightPointObject{
+		Id: "2",
+		Destination: 0x1,
+		Address: "Keks2",
+		Location: "U325-Team3",
+		Type: "Lamp",
+	}
+	lpos[2] = &LightPointObject{
+		Id: "3",
+		Destination: 0x2,
+		Address: "Keks3",
+		Location: "U325-Team3",
+		Type: "Lamp",
+	}
+}
 
 // GetLightPoints is a get endpoint for querying all light point objects
 func GetLightPoints(w http.ResponseWriter, r *http.Request) {
-	emptyLPOs := make([]LightPointObject, 0)
-
-	if err := json.NewEncoder(w).Encode(emptyLPOs); err != nil {
+	if err := json.NewEncoder(w).Encode(lpos); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -21,9 +48,19 @@ func GetLightPoints(w http.ResponseWriter, r *http.Request) {
 func GetLightPointInfo(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
-	log.Println(params["id"])
 
-	http.Error(w, "Not implemented", http.StatusInternalServerError)
+
+	id := params["id"]
+	for _, lpo := range lpos {
+		if strings.Compare(lpo.Id, id) == 0 {
+			if err := json.NewEncoder(w).Encode(lpo); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+	}
+
+	http.NotFound(w, r)
 }
 
 // SceneHandler forwards the request based on the request method
