@@ -17,6 +17,7 @@ func main() {
 
 	log.Println("Registering endpoint /lp/{id}")
 	router.HandleFunc("/lp/{id}", rest.GetLightPointInfo).Methods("GET")
+	router.HandleFunc("/lp/{id}", rest.DimLightPoint).Methods("POST")
 	log.Println("Registering endpoint /lp")
 	router.HandleFunc("/lp", rest.GetLightPoints).Methods("GET")
 	log.Println("Registering endpoints /lz/{id} for get and post")

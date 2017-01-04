@@ -174,6 +174,45 @@ func GetLightPointInfo(w http.ResponseWriter, r *http.Request) {
 	http.NotFound(w, r)
 }
 
+// DimLightPoint dim a single lightpoint
+func DimLightPoint(w http.ResponseWriter, r *http.Request) {
+
+	params := mux.Vars(r)
+
+	id := params["id"]
+
+	usbdali := &daliclient.Usbdali{}
+	usbdali.Connect("localhost")
+	defer usbdali.Close()
+
+	for _, lpo := range lpos {
+		if strings.Compare(lpo.Id, id) == 0 {
+/*
+			command := daliclient.CmdAddGroup
+			if floatVal == 0 {
+				command = daliclient.CmdOff
+			}*/
+			if err := usbdali.Send(daliclient.MakeBroadcastCmd(0x00, daliclient.CmdDimDown)); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			var resp []byte
+			var err error
+			if resp, err = usbdali.Receive(); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			fmt.Println(resp)
+
+			return
+		}
+	}
+
+	http.NotFound(w, r)
+}
+
 // getScenes is a get endpoint for querying all available scenes
 func GetScenes(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(scenes); err != nil {
@@ -186,16 +225,16 @@ func GetScenes(w http.ResponseWriter, r *http.Request) {
 func ActivateScene(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id := params["id"]
+	usbdali := &daliclient.Usbdali{}
+	defer usbdali.Close()
 
 	for _, scene := range scenes {
 		if strings.Compare(scene.Id, id) == 0 {
-			usbdali := &daliclient.Usbdali{}
 
 			if err := usbdali.Connect("localhost"); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			defer usbdali.Close()
 
 			if err := usbdali.Send(daliclient.MakeBroadcastCmd(scene.sceneId, daliclient.CmdSetScene)); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
